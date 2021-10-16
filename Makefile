@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-GH_PAGE := dummy.github.io
+GH_PAGE := rmechi.github.io
 
 .PHONY: deploy
 deploy:
