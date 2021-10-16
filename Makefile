@@ -1,29 +1,16 @@
-.PHONY: docs
+SHELL := /bin/bash
+GH_PAGE := dummy.github.io
 
-default: install
+.PHONY: deploy
+deploy:
+	cd $(GH_PAGE) && mkdocs gh-deploy --config-file ../mkdocs.yml --remote-branch main
 
-all: install build
+.PHONY: update-build-version
+update-build-version:
+	git submodule update --remote --merge
+	git add $(GH_PAGE)
+	git commit -m "ci: update build version"
 
-
-h help:
-	@grep '^[a-z]' Makefile
-
-
-install:
-	pip install pip --upgrade
-	pip install -r requirements.txt
-
-upgrade:
-	pip install pip --upgrade
-	pip install -r requirements.txt --upgrade
-
-
-s serve:
-	mkdocs serve --strict
-
-
-b build:
-	mkdocs build --strict
-
-d deploy:
-	mkdocs gh-deploy --strict --force
+.PHONY: publish
+publish: deploy update-build-version
+	git push --no-verify
