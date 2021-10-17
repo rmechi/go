@@ -7,6 +7,7 @@
 ## declare a slice:
 ```
 slice_name := []datatype{values}
+slice_name := []datatype{}  // here length is 0 and capacity is 0 and empty
 letters := []string{"a", "b", "c", "d"}
 numbers := []int{1, 3, 3, 4, 5}
 ```
@@ -234,4 +235,34 @@ sub_slice capacity = 10
 new_slice = [1 2 3 4 5]
 new_slice length = 5
 new_slice capacity = 5
+```
+
+## loop through
+example:
+```
+package main
+import ("fmt")
+
+func main() {
+
+  arr6 := []string{"tom", "dom"}
+  
+  for i, s := range arr6 {
+    fmt.Println(i, s)
+  }
+  
+  for _, s := range arr6 {
+    fmt.Println(s)
+  }
+  
+   
+}
+```
+
+output:
+```
+0 tom
+1 dom
+tom
+dom
 ```
