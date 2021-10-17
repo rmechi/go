@@ -23,4 +23,6 @@ nav:
   - Home: index.md
   - Tutorial:
       - Arrays: go/arrays.md
+      - Arrays: go/slices.md
+      - Arrays: go/maps.md
 
