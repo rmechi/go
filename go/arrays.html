@@ -104,6 +104,88 @@
             <div class="section">
               
                 <h2 id="go-arrays">Go Arrays<a class="headerlink" href="#go-arrays" title="Permanent link">#</a></h2>
+<ul>
+<li>Go arrays are fixed length. you can define length by <code>[length]</code> ex. <code>[5]</code> or inferred <code>[...]</code> compiler decide in this case.</li>
+</ul>
+<h2 id="declare-a-slice">declare a slice:<a class="headerlink" href="#declare-a-slice" title="Permanent link">#</a></h2>
+<pre><code>var array = [length]datatype{values}
+var array = [...]datatype{values}
+array := [length]datatype{values}
+array := [...]datatype{values}
+</code></pre>
+<h2 id="access-and-change-the-element">access and change the element:<a class="headerlink" href="#access-and-change-the-element" title="Permanent link">#</a></h2>
+<p>example:</p>
+<pre><code>package main
+import (&quot;fmt&quot;)
+
+func main() {
+  arr := [4]int{1, 2, 3, 4}
+  fmt.Printf(&quot;arr element = %v\n&quot;, arr[1])
+  arr[1] = 22
+  fmt.Printf(&quot;arr element = %v\n&quot;, arr[1])
+
+}
+</code></pre>
+<p>output:</p>
+<pre><code>arr element = 2
+arr element = 22
+</code></pre>
+<h2 id="more-examples">more examples<a class="headerlink" href="#more-examples" title="Permanent link">#</a></h2>
+<p>example:</p>
+<pre><code>package main
+import (&quot;fmt&quot;)
+
+func main() {
+  arr1 := [4]string{} 
+  arr2 := [4]string{&quot;a&quot;,&quot;b&quot;} 
+  arr3 := [4]string{&quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;} 
+  arr4 := [4]string{1:&quot;tom&quot;,3:&quot;bom&quot;}
+  arr5 := [4]int{1:10,2:40}
+  arr6 := [...]int{1,2,3,4,5,6,7}
+
+  fmt.Println(&quot;array is&quot;, arr1, &quot;length is&quot;, len(arr1))
+  fmt.Println(&quot;array is&quot;, arr2, &quot;length is&quot;, len(arr2))
+  fmt.Println(&quot;array is&quot;, arr3, &quot;length is&quot;, len(arr3))
+  fmt.Println(&quot;array is&quot;, arr4, &quot;length is&quot;, len(arr4))
+  fmt.Println(&quot;array is&quot;, arr5, &quot;length is&quot;, len(arr5))
+  fmt.Println(&quot;array is&quot;, arr6, &quot;length is&quot;, len(arr6))
+
+}
+</code></pre>
+<p>output:</p>
+<pre><code>array is [   ] length is 4
+array is [a b  ] length is 4
+array is [a b c d] length is 4
+array is [ tom  bom] length is 4
+array is [0 10 40 0] length is 4
+array is [1 2 3 4 5 6 7] length is 7
+</code></pre>
+<h2 id="loop-through">loop through<a class="headerlink" href="#loop-through" title="Permanent link">#</a></h2>
+<p>example:</p>
+<pre><code>package main
+import (&quot;fmt&quot;)
+
+func main() {
+
+  arr6 := [...]string{&quot;tom&quot;, &quot;dom&quot;}
+
+  for i, s := range arr6 {
+    fmt.Println(i, s)
+  }
+
+  for _, s := range arr6 {
+    fmt.Println(s)
+  }
+
+
+}
+</code></pre>
+<p>output:</p>
+<pre><code>0 tom
+1 dom
+tom
+dom
+</code></pre>
               
             </div>
           </div>
