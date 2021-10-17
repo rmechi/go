@@ -105,7 +105,7 @@
               
                 <h2 id="go-slices">Go slices<a class="headerlink" href="#go-slices" title="Permanent link">#</a></h2>
 <ul>
-<li>used to store values of saem data type.</li>
+<li>used to store values of same data type.</li>
 <li>flixible than arrays. i.e. length of an array can grow or shrink</li>
 </ul>
 <h2 id="declare-a-slice">declare a slice:<a class="headerlink" href="#declare-a-slice" title="Permanent link">#</a></h2>
@@ -161,8 +161,9 @@ length after append = 7
 capacity after append = 8
 </code></pre>
 <h2 id="creating-a-slice-from-an-array">creating a slice from an array:<a class="headerlink" href="#creating-a-slice-from-an-array" title="Permanent link">#</a></h2>
-<pre><code>var myarray = [length]datatype{values} // An array
-myslice := myarray[start:end] // A slice made from the array
+<p>usage:</p>
+<pre><code>var testarray = [length]datatype{values} 
+myslice := testarray[start:end]
 </code></pre>
 <p>example:</p>
 <pre><code>package main
@@ -179,12 +180,131 @@ func main() {
     fmt.Printf(&quot;capacity = %d\n&quot;, cap(testslice))
     fmt.Println(testslice)
 
+    fmt.Println(&quot;----------------------------&quot;)
+
+    y_array := [6]byte{'G', 'o', 'l', 'a', 'n', 'g'}
+    fmt.Println(y_array)
+    y_slice := y_array[3:5]
+    fmt.Println(y_slice)
+
 }
 </code></pre>
 <p>output:</p>
 <pre><code>length = 2
 capacity = 2
 [4 5]
+------------------
+[71 111 108 97 110 103]
+[97 110]
+</code></pre>
+<h2 id="appending-to-slice">appending to slice<a class="headerlink" href="#appending-to-slice" title="Permanent link">#</a></h2>
+<p>usahe:</p>
+<pre><code>c := append(slice1, slice2...)        # merging 2 slices
+c := append(slice1, &quot;item1&quot;, &quot;item2&quot; )  # adding items to slice
+</code></pre>
+<p>example:</p>
+<pre><code>package main
+
+import (
+    &quot;fmt&quot;
+)
+
+func main() {
+
+    a := []string{&quot;John&quot;, &quot;Paul&quot;}
+    b := []string{&quot;George&quot;, &quot;Ringo&quot;, &quot;Pete&quot;}
+    a = append(a, b...) // equivalent to &quot;append(a, b[0], b[1], b[2])&quot;
+    fmt.Println(a)
+    a = append(a, &quot;something&quot;)
+    fmt.Println(a)
+}
+</code></pre>
+<p>output:</p>
+<pre><code>[John Paul George Ringo Pete]
+[John Paul George Ringo Pete something]
+</code></pre>
+<h1 id="get-and-change-a-element-from-slice">get and change a element from slice<a class="headerlink" href="#get-and-change-a-element-from-slice" title="Permanent link">#</a></h1>
+<p>usage:</p>
+<pre><code>slice[index] = &quot;new_value&quot;
+</code></pre>
+<p>example:</p>
+<pre><code>package main
+
+import (
+    &quot;fmt&quot;
+)
+
+func main() {
+
+    b := []string{&quot;George&quot;, &quot;Ringo&quot;, &quot;Pete&quot;}
+    fmt.Println(b)
+    b[0] = &quot;Tom&quot;
+    fmt.Println(b)
+
+}
+</code></pre>
+<p>output:</p>
+<pre><code>[George Ringo Pete]
+[Tom Ringo Pete]
+</code></pre>
+<h2 id="copy-function"><code>copy</code> function<a class="headerlink" href="#copy-function" title="Permanent link">#</a></h2>
+<p>usage:</p>
+<pre><code>copy(dest, src)
+</code></pre>
+<p>as per  https://go.dev/blog/slices-intro
+- re-slicing a slice doesn’t make a copy of the underlying array. The full array will be kept in memory until it is no longer referenced. Occasionally this can cause the program to hold all the data in memory when only a small piece of it is needed.
+effective:</p>
+<pre><code>var digitRegexp = regexp.MustCompile(&quot;[0-9]+&quot;)
+
+func FindDigits(filename string) []byte {
+    b, _ := ioutil.ReadFile(filename)
+    return digitRegexp.Find(b)
+}
+</code></pre>
+<p>effective:</p>
+<pre><code>func CopyDigits(filename string) []byte {
+    b, _ := ioutil.ReadFile(filename)
+    b = digitRegexp.Find(b)
+    c := make([]byte, len(b))
+    copy(c, b)
+    return c
+}
+</code></pre>
+<p>example:</p>
+<pre><code>package main
+import (&quot;fmt&quot;)
+
+func main() {
+  main_slice := []int{1,2,3,4,5,6,7,8,9,10}
+  fmt.Printf(&quot;main_slice = %v\n&quot;, main_slice)
+  fmt.Printf(&quot;main_slice length= %v\n&quot;, len(main_slice))
+  fmt.Printf(&quot;main_slice capacity = %v\n&quot;, cap(main_slice))
+
+
+  sub_slice := main_slice[:len(main_slice)-5]
+  fmt.Printf(&quot;sub_slice = %v\n&quot;,sub_slice)
+  fmt.Printf(&quot;sub_slice length = %d\n&quot;, len(sub_slice))
+  fmt.Printf(&quot;sub_slice capacity = %d\n&quot;, cap(sub_slice))
+
+  // copy
+  new_slice := make([]int, len(sub_slice))
+  copy(new_slice, sub_slice)
+
+  fmt.Printf(&quot;new_slice = %v\n&quot;,new_slice)
+  fmt.Printf(&quot;new_slice length = %d\n&quot;, len(new_slice))
+  fmt.Printf(&quot;new_slice capacity = %d\n&quot;, cap(new_slice))
+}
+</code></pre>
+<p>output:</p>
+<pre><code>main_slice = [1 2 3 4 5 6 7 8 9 10]
+main_slice length= 10
+main_slice capacity = 10
+sub_slice = [1 2 3 4 5]
+sub_slice length = 5
+sub_slice capacity = 10
+new_slice = [1 2 3 4 5]
+new_slice length = 5
+new_slice capacity = 5
 </code></pre>
               
             </div>
