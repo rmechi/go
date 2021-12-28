@@ -95,3 +95,18 @@ output:
 tom
 dom
 ```
+
+## Memory Representation
+- In Go, there is no such thing as passing by reference. Everything is passed by value. If you assign the value of an array to another variable, the entire value is copied.
+```
+arr2 := arr
+```
+- If you want to pass just the “reference” to the array, you can use pointers:
+```
+arr2 := &arr
+```
+
+
+More Reading:
+- https://www.sohamkamani.com/golang/arrays-vs-slices/
+- https://www.godesignpatterns.com/2014/05/arrays-vs-slices.html

@@ -266,3 +266,179 @@ output:
 tom
 dom
 ```
+
+## Memory Representation
+A slice is allocated differently from an array, and is actually a modified pointer. Each slice contains three pieces of information:
+- The pointer to the sequence of data
+- The length: which denotes the total number of elements currently contained.
+- The capacity: which is the total number of memory locations provisioned.
+
+## Reference Passing
+- When you assign a slice to another variable, you still pass by value. The value here refers to just the pointer, length, and capacity, and not the memory occupied by the elements themselves.
+
+
+- Everything in Go is passed by value, slices too. But a slice value is a header, describing a contiguous section of a backing array, and **a slice value only contains a pointer to the array where the elements are actually stored**. The slice value does not include its elements (unlike arrays).
+
+- So when you pass a slice to a function, a copy will be made from this header, including the pointer, which will point to the same backing array. Modifying the elements of the slice implies modifying the elements of the backing array, and so all slices which share the same backing array will "observe" the change.
+
+
+## more examples
+```
+package main
+
+import "fmt"
+
+func main() {
+  
+  
+    fmt.Println("Go takes a more lean and lazy approach in doing this. It keeps modifying the same underlying array until the capacity of a slice is reached.")
+    fmt.Println("Because since s still has capacity, both a and b share the same data ptr. If you change the capacity to 4, it prints:")
+    t := make([]int, 0, 5)
+    t = append(t, []int{1, 2, 3, 4}...)
+    
+    fmt.Printf("t: length: %d, capacity: %d, data: %v\n", len(t), cap(t), t)
+
+    c := append(t, 5)
+    fmt.Printf("a: length: %d, capacity: %d, data: %v\n", len(c), cap(c), c)
+
+    d := append(t, 6)
+    fmt.Printf("d: length: %d, capacity: %d, data: %v\n", len(d), cap(d), d)
+    fmt.Printf("c: length: %d, capacity: %d, data: %v\n", len(c), cap(c), c)
+    fmt.Println(" ")
+    
+    
+    
+    fmt.Println(" ")
+    fmt.Println("when new variable added slice capacity doubles")
+  
+    s := make([]int, 0, 0)
+    s = append(s, []int{1, 2, 3, 4}...)
+    
+    fmt.Printf("s: length: %d, capacity: %d, data: %v\n", len(s), cap(s), s)
+
+    a := append(s, 5)
+    fmt.Printf("a: length: %d, capacity: %d, data: %v\n", len(a), cap(a), a)
+
+    b := append(s, 6)
+    fmt.Printf("b: length: %d, capacity: %d, data: %v\n", len(b), cap(b), b)
+    fmt.Printf("a: length: %d, capacity: %d, data: %v\n", len(a), cap(a), a)
+    
+    a = append(a, 7, 8, 9, 10)
+    fmt.Printf("a: length: %d, capacity: %d, data: %v\n", len(a), cap(a), a)
+}
+
+```
+
+output:
+```
+Go takes a more lean and lazy approach in doing this. It keeps modifying the same underlying array until the capacity of a slice is reached.
+Because since s still has capacity, both a and b share the same data ptr. If you change the capacity to 4, it prints:
+t: length: 4, capacity: 5, data: [1 2 3 4]
+a: length: 5, capacity: 5, data: [1 2 3 4 5]
+d: length: 5, capacity: 5, data: [1 2 3 4 6]
+c: length: 5, capacity: 5, data: [1 2 3 4 6]
+ 
+ 
+when new variable added slice capacity doubles
+s: length: 4, capacity: 4, data: [1 2 3 4]
+a: length: 5, capacity: 8, data: [1 2 3 4 5]
+b: length: 5, capacity: 8, data: [1 2 3 4 6]
+a: length: 5, capacity: 8, data: [1 2 3 4 5]
+a: length: 9, capacity: 16, data: [1 2 3 4 5 7 8 9 10]
+```
+
+More Reading:
+- https://www.sohamkamani.com/golang/arrays-vs-slices/
+- https://stackoverflow.com/questions/39993688/are-slices-passed-by-value
+- https://www.geeksforgeeks.org/how-to-pass-a-slice-to-function-in-golang/
+- https://stackoverflow.com/questions/28115599/when-does-golang-append-create-a-new-slice
+
+
+```
+package main
+
+import "fmt"
+
+func main() {
+
+	fmt.Println("array address")
+	array1 := [3]int{6, 1, 2}
+	array2 := array1
+	fmt.Printf("Address of array = %v: %p\n", array1, &array1)
+	fmt.Printf("Address of array = %v: %p\n", array2, &array2)
+	fmt.Println("-------")
+	array2[1] = 3333
+	fmt.Println(array1)
+	fmt.Println(array2)
+	fmt.Println("---array done----")
+
+	fmt.Println("--- print address of slice")
+	slice1 := []int{6, 1, 2}
+	slice2 := slice1
+	fmt.Printf("Address of slice = %v: %p\n", slice1, &slice1)
+	fmt.Printf("Address of slice = %v: %p\n", slice2, &slice2)
+	fmt.Println("--- print address of slice underlying array")
+	fmt.Printf("Address of slice = %v: %p\n", slice1, slice1)
+	fmt.Printf("Address of slice = %v: %p\n", slice2, slice2)
+
+	fmt.Println("Go takes a more lean and lazy approach in doing this. It keeps modifying the same underlying array until the capacity of a slice is reached.")
+	fmt.Println("Because since s still has capacity, both a and b share the same data ptr. If you change the capacity to 4, it prints:")
+	t := make([]int, 0, 5)
+	t = append(t, []int{1, 2, 3, 4}...)
+
+	fmt.Printf("t: length: %d, capacity: %d, pointer to underlying array: %p, data: %v\n", len(t), cap(t), t, t)
+	c := append(t, 5)
+	fmt.Printf("a: length: %d, capacity: %d, pointer to underlying array: %p, data: %v\n", len(c), cap(c), c, c)
+	d := append(t, 6)
+	fmt.Printf("d: length: %d, capacity: %d, pointer to underlying array: %p, data: %v\n", len(d), cap(d), d, d)
+	fmt.Printf("c: length: %d, capacity: %d, pointer to underlying array: %p, data: %v\n", len(c), cap(c), c, c)
+	fmt.Println(" ")
+
+	fmt.Println(" ")
+	fmt.Println("when new variable added slice capacity doubles")
+	s := make([]int, 0, 0)
+	s = append(s, []int{1, 2, 3, 4}...)
+	fmt.Printf("s: length: %d, capacity: %d, pointer to underlying array: %p, data: %v\n", len(s), cap(s), s, s)
+	a := append(s, 5)
+	fmt.Printf("a: length: %d, capacity: %d, pointer to underlying array: %p, data: %v\n", len(a), cap(a), a, a)
+	b := append(s, 6)
+	fmt.Printf("b: length: %d, capacity: %d,pointer to underlying array: %p,  data: %v\n", len(b), cap(b), b, b)
+	fmt.Printf("a: length: %d, capacity: %d, pointer to underlying array: %p, data: %v\n", len(a), cap(a), a, a)
+	a = append(a, 7, 8, 9, 10)
+	fmt.Printf("a: length: %d, capacity: %d, pointer to underlying array: %p, data: %v\n", len(a), cap(a), a, a)
+}
+```
+
+```
+Address of array = [6 1 2]: 0xc000128090
+Address of array = [6 1 2]: 0xc0001280a8
+-------
+[6 1 2]
+[6 3333 2]
+---array done----
+--- print address of slice
+Address of slice = [6 1 2]: 0xc000112060
+Address of slice = [6 1 2]: 0xc000112078
+--- print address of slice underlying array
+Address of slice = [6 1 2]: 0xc000128138
+Address of slice = [6 1 2]: 0xc000128138
+Go takes a more lean and lazy approach in doing this. It keeps modifying the same underlying array until the capacity of a slice is reached.
+Because since s still has capacity, both a and b share the same data ptr. If you change the capacity to 4, it prints:
+t: length: 4, capacity: 5, pointer to underlying array: 0xc00013c090, data: [1 2 3 4]
+a: length: 5, capacity: 5, pointer to underlying array: 0xc00013c090, data: [1 2 3 4 5]
+d: length: 5, capacity: 5, pointer to underlying array: 0xc00013c090, data: [1 2 3 4 6]
+c: length: 5, capacity: 5, pointer to underlying array: 0xc00013c090, data: [1 2 3 4 6]
+
+
+when new variable added slice capacity doubles
+s: length: 4, capacity: 4, pointer to underlying array: 0xc0001240a0, data: [1 2
+                                                                               2 3 4]
+a: length: 5, capacity: 8, pointer to underlying array: 0xc000140100, data: [1 2
+                                                                               2 3 4 5]
+b: length: 5, capacity: 8,pointer to underlying array: 0xc000140140,  data: [1 2
+                                                                               2 3 4 6]
+a: length: 5, capacity: 8, pointer to underlying array: 0xc000140100, data: [1 2
+                                                                               2 3 4 5]
+a: length: 9, capacity: 16, pointer to underlying array: 0xc00015a080, data: [1 
+                                                                                2 3 4 5 7 8 9 10]
+```
