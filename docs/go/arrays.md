@@ -1,4 +1,4 @@
-## Go Arrays
+## Go Arrays:
 
 - Go arrays are fixed length. you can define length by ```[length]``` ex. ```[5]``` or inferred ```[...]``` compiler decide in this case.
 
